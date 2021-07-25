@@ -18,6 +18,8 @@ server.use(express.static("public"));
 
 const mongoose = require("mongoose");
 
+const encrypt = require("mongoose-encryption");
+
 
 mongoose.connect("mongodb+srv://m220student:m220student@mflix.fyjdx.mongodb.net/EmailPasswordAuth?retryWrites=true&w=majority" ,{ useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false });
 
@@ -32,7 +34,12 @@ const EmailAuth = new mongoose.Schema({
   }
 });
 
-const EmPas = mongoose.model("LOGIN PASSWORD AND EMAIL" , EmailAuth);
+
+const secret = "this is all about me";
+
+EmailAuth.plugin(encrypt, { secret: secret , encryptedFields: ["password" , " username"]  });
+
+const EmPas = new  mongoose.model("LOGIN PASSWORD AND EMAIL" , EmailAuth);
 const hello = new EmPas({
   username:"utkarah201Singh@gmail.com",
   password:"abcf"
@@ -73,7 +80,7 @@ server.route("/login")
 })
 .post((req,res)=>{
 
-EmPas.findOne({ password:req.body.password  } , ( err , result)=>{
+EmPas.findOne({username:req.body.username } , ( err , result)=>{
 
   if(err)
   {
@@ -83,7 +90,11 @@ EmPas.findOne({ password:req.body.password  } , ( err , result)=>{
 
   else
   {
-  if(result) res.render("secrets");
+    console.log(result.password );
+    console.log(req.body.password);
+
+
+  if(result.password === req.body.password) res.render("secrets");
   else
   {
     res.send("Entered Wrong Email or Password Please ReEnter The password");
