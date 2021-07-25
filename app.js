@@ -20,6 +20,8 @@ const mongoose = require("mongoose");
 
 const encrypt = require("mongoose-encryption");
 
+require('dotenv').config();
+
 
 mongoose.connect("mongodb+srv://m220student:m220student@mflix.fyjdx.mongodb.net/EmailPasswordAuth?retryWrites=true&w=majority" ,{ useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false });
 
@@ -35,9 +37,8 @@ const EmailAuth = new mongoose.Schema({
 });
 
 
-const secret = "this is all about me";
-
-EmailAuth.plugin(encrypt, { secret: secret , encryptedFields: ["password" , " username"]  });
+console.log(process.env.SECRET);
+EmailAuth.plugin( encrypt, { secret:process.env.SECRET, encryptedFields: ["password" , " username"]  });
 
 const EmPas = new  mongoose.model("LOGIN PASSWORD AND EMAIL" , EmailAuth);
 const hello = new EmPas({
@@ -90,10 +91,6 @@ EmPas.findOne({username:req.body.username } , ( err , result)=>{
 
   else
   {
-    console.log(result.password );
-    console.log(req.body.password);
-
-
   if(result.password === req.body.password) res.render("secrets");
   else
   {
